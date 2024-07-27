@@ -6,6 +6,8 @@ const CustomerController = require('../controllerssssssssss/Customer');
 const EmployeeController = require('../controllerssssssssss/employee');
 const RoomsController = require('../controllerssssssssss/RoomsController');
 const TypeController = require('../controllerssssssssss/TypeController');
+const EquipmentController = require('../controllerssssssssss/Equipment');
+const BookingController = require('../controllerssssssssss/Bookin');
 
 
 //======================= AuthController =============================
@@ -20,7 +22,7 @@ router.put('/customers/:Cus_ID', upload.single('image'), CustomerController.upda
 router.delete('/customers/:Cus_ID', CustomerController.delete);
 
 // employee
-router.post("/employee/registerUser", upload.single('image'), EmployeeController.create);
+router.post("/employees/registerUser", upload.single('image'), EmployeeController.create);
 router.get('/employees', EmployeeController.getAll);
 router.put('/employees/:Emp_ID', upload.single('image'), EmployeeController.update);
 router.delete('/employees/:Emp_ID', EmployeeController.delete);
@@ -29,12 +31,37 @@ router.delete('/employees/:Emp_ID', EmployeeController.delete);
 router.get('/rooms', RoomsController.getAll);
 router.post("/rooms", RoomsController.create);
 router.put('/rooms/:Room_ID', RoomsController.update);
+router.put('/roomsStatus/:Room_ID', RoomsController.updateStatus);
+router.get('/rooms/:Type_ID', RoomsController.getAllWhereType);
 router.delete('/rooms/:Room_ID', RoomsController.delete);
+router.post('/searchAvailableRooms', BookingController.searchAvailableRooms);
+
+
 // type
 router.get('/type', TypeController.getAll);
 router.post('/type/create', multipleUpload, TypeController.create);
 router.delete('/type/:Type_ID', TypeController.delete);
 router.put('/type/:Type_ID', multipleUpload, TypeController.update);
+
+
+// equipment
+router.get('/equipment', EquipmentController.getAll);
+router.post("/equipment", EquipmentController.create);
+router.put('/equipment/:EQ_ID', EquipmentController.update);
+router.delete('/equipment/:EQ_ID', EquipmentController.delete);
+
+
+// booking
+router.post("/booking", BookingController.create);
+router.get("/booking", BookingController.getAll);
+router.get("/payment", BookingController.getAllPayment);
+router.get("/history/:Cus_ID", BookingController.getAllHistory);
+router.get('/bookingWait', BookingController.getAllWait);
+router.get('/bookingWaitCheckIn', BookingController.getAllWaitCheckIn);
+router.get('/bookingWaitCheckOut', BookingController.getAllWaitCheckOut);
+router.put('/booking/:Booking_ID', BookingController.update);
+router.put('/bookingStatus/:Booking_ID', BookingController.updateStatus);
+router.put('/bookingStatusCheckOut/:Booking_ID', BookingController.updateStatusCheckOut);
 
 
 //======================= CustomerController =============================

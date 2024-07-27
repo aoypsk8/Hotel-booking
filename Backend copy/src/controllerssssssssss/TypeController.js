@@ -92,7 +92,7 @@ class TypeController {
         const connection = connectToMySQL();
         const { Type_ID } = req.params;
         const { Type_name, PriceDay, PriceMonth, PriceYear, Area, detail, remark } = req.body;
-        
+
         const images = req.files || {};
         const imgPaths = {
             img1: images['img1'] ? images['img1'][0].path : null,
@@ -103,14 +103,14 @@ class TypeController {
             img6: images['img6'] ? images['img6'][0].path : null,
             img7: images['img7'] ? images['img7'][0].path : null
         };
-    
+
         let updateQuery = `
             UPDATE tb_type
             SET Type_name = ?, PriceDay = ?, PriceMonth = ?, PriceYear = ?, Area = ?, detail = ?, remark = ?,
                 img1 = ?, img2 = ?, img3 = ?, img4 = ?, img5 = ?, img6 = ?, img7 = ?
             WHERE Type_ID = ?
         `;
-    
+
         let queryParams = [
             Type_name,
             PriceDay,
@@ -128,9 +128,9 @@ class TypeController {
             imgPaths.img7 || null,
             Type_ID
         ];
-    
+
         console.log('queryParams:', queryParams);
-    
+
         for (const key in imgPaths) {
             if (imgPaths[key]) {
                 try {
@@ -142,31 +142,43 @@ class TypeController {
                 }
             }
         }
-    
+
         connection.query(updateQuery, queryParams, (error, results) => {
             connection.end();
             if (error) {
                 console.error('Error updating data in tb_type:', error);
                 return res.status(500).json({ message: "An error occurred while updating data" });
             }
-    
+
             if (results.affectedRows === 0) {
                 return res.status(404).json({ message: "Type_ID not found" });
             }
-    
+
             return res.json({
                 status: "ok",
                 message: "ອັບເດດສຳເລັດ",
             });
         });
     }
-    
+
 
 
     static async getAll(req, res) {
         const connection = connectToMySQL();
         try {
-            const query = 'SELECT * FROM tb_type';
+            // const query = 'SELECT * FROM tb_type';
+            const query = `
+                SELECT 
+                tt.*,
+                COUNT(tr.Room_ID) AS NumberOfRooms
+                FROM 
+                tb_type tt
+                LEFT JOIN 
+                tb_rooms tr ON tt.Type_ID = tr.Type_ID AND tr.Status = 1
+                GROUP BY 
+                tt.Type_ID, tt.Type_name;
+            `;
+
             connection.query(query, (error, results) => {
                 connection.end();
                 if (error) {

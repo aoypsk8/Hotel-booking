@@ -178,7 +178,7 @@ class CustomerController {
             connection.query(updateQuery, params, (error, results) => {
                 if (error) {
                     console.log(error);
-                    return res.json({ status: "error", message: "An error occurred while updating" });
+                    return res.json({ status: "error", message: "An error occurred while updating" ,error});
                 }
                 if (results.affectedRows === 0) {
                     return res.json({ message: "Customer not found" });
@@ -188,7 +188,7 @@ class CustomerController {
                     connection.query(query, [Cus_ID], (error, results2) => {
                         connection.end();
                         if (error) {
-                            return res.json({ message: "An error occurred" });
+                            return res.json({ message: "An error occurred",error });
                         }
                         return res.json({
                             status: "ok",

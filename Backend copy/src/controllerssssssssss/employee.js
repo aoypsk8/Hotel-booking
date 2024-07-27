@@ -6,6 +6,7 @@ class EmployeeController {
         const { Emp_FirstName, Emp_LastName, Phone_Number, Emp_Address, Password } = req.body;
         const Emp_Profile = req.file ? req.file.path : null;
 
+        console.log(Emp_Profile);
         if (!Emp_FirstName || !Emp_LastName || !Phone_Number || !Emp_Address || !Password ) {
             return res.json({
                 message: "Please provide all required fields!",
@@ -63,6 +64,7 @@ class EmployeeController {
                             });
                         });
                     } catch (uploadError) {
+                        
                         connection.end();
                         return res.json({ status: "error", message: "An error occurred while uploading image" });
                     }
