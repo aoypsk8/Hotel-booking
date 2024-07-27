@@ -2,13 +2,41 @@ import React, { useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import BillDialog from './BillDialog';
+import { UpdateBooking, UpdateBookingCheckIn } from '../../../../api/booking/bookingAction';
+import Swal from 'sweetalert2';
+import { useDispatch } from 'react-redux';
+// Example data (replace this with your actual data source)
+const formatDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`; // Format as DD-MM-YYYY
+};
+
+function formatNumber(number) {
+    return new Intl.NumberFormat("en-US").format(number);
+}
 
 const CheckInDialog = ({ visible, hideDialog, data }) => {
+    const dispatch = useDispatch();
     // Dialog state and data
     const [visibleBill, setVisibleBill] = useState(false);
 
     const showDialog = () => {
-        setVisibleBill(true);
+        try {
+            dispatch(UpdateBookingCheckIn(data.Booking_ID, 3)).then(() => {
+                Swal.fire("Success", "Check-In successfully", "success");
+                setVisibleBill(true);
+            }).catch(error => {
+                console.error('Error creating room:', error);
+                Swal.fire("Error", "There was an error Check-In", "error");
+            });
+
+
+        } catch (error) {
+            Swal.fire("Error", error.message, "error");
+        }
     };
 
     const hideDialogBill = () => {
@@ -29,7 +57,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.id}
+                            value={data.Booking_ID}
                             readOnly
 
                         />
@@ -39,7 +67,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.roomNumber}
+                            value={data.Room_Number}
                             readOnly
                         />
                     </div>
@@ -48,7 +76,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.roomType}
+                            value={data.Type_name}
                             readOnly
                         />
                     </div>
@@ -58,25 +86,17 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.roomBooking}
+                            value={data.Type_Booking === 1 ? "ເປັນມື້" : data.Type_Booking === 2 ? "ເປັນເດືອນ" : "ເປັນປີ"}
                             readOnly
                         />
                     </div>
-                    <div className="flex justify-between items-center mt-2 px-10">
-                        <p className=' text-lg '>ຈຳນວນ</p>
-                        <input
-                            type="search"
-                            className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.amount}
-                            readOnly
-                        />
-                    </div>
+
                     <div className="flex justify-between items-center mt-2 px-10">
                         <p className=' text-lg '>ວັນທີ່ແຈ້ງເຂົ້າ</p>
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.checkInDate}
+                            value={formatDate(data.Check_IN)}
                             readOnly
                         />
                     </div>
@@ -85,7 +105,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.checkOutDate}
+                            value={formatDate(data.Check_OUT)}
                             readOnly
                         />
                     </div>
@@ -94,7 +114,16 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.dataBooking}
+                            value={formatDate(data.Create_Date)}
+                            readOnly
+                        />
+                    </div>
+                    <div className="flex justify-between items-center mt-2 px-10">
+                        <p className=' text-lg '>ຈຳນວນມື້ທີ່ຈອງ</p>
+                        <input
+                            type="search"
+                            className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={data.daysBooked}
                             readOnly
                         />
                     </div>
@@ -103,7 +132,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.name}
+                            value={data.First_name + data.Last_name}
                             readOnly
                         />
                     </div>
@@ -112,7 +141,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.phoneNumer}
+                            value={data.Phone_Number}
                             readOnly
                         />
                     </div>
@@ -121,7 +150,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.email}
+                            value={data.Email}
                             readOnly
                         />
                     </div>
@@ -131,7 +160,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="search"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.total}
+                            value={formatNumber(data.total)}
                             readOnly
                         />
                     </div>
@@ -161,7 +190,7 @@ const CheckInDialog = ({ visible, hideDialog, data }) => {
             )}
 
 
-            <BillDialog visible={visibleBill} hideDialog={hideDialogBill} />
+            <BillDialog visible={visibleBill} hideDialog={hideDialogBill} data={data} hideCheckInDialog={hideDialog} />
         </Dialog>
     );
 };

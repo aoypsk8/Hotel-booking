@@ -13,6 +13,12 @@ import orderTodaySlice from "./orderTodaySlice";
 import inSlice from "./inSlice";
 import outSlice from "./outSlice";
 import roomSlice from "./roomSlice";
+import equipmentSlice from "./equipmentSlice";
+import typeSliceDetail from "./typeSliceDetail";
+import bookingSlice from "./bookingSlice";
+import searchSlice from "./searchSlice";
+import historySlice from "./historySlice";
+import paySlice from "./paySlice ";
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -28,7 +34,13 @@ const rootReducer = combineReducers({
   customer:customerSlice,
   ins:inSlice,
   room:roomSlice,
-  outs:outSlice
+  outs:outSlice,
+  equipment:equipmentSlice,
+  typedetail:typeSliceDetail,
+  booking:bookingSlice,
+  search:searchSlice,
+  history:historySlice,
+  pay:paySlice
 });
 
 export default rootReducer;

@@ -2,34 +2,35 @@ import AdminMenu from "../homeAdmin";
 import { useState, useEffect } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import * as XLSX from 'xlsx';
-
-// Example data (replace this with your actual data source)
-// Example data (replace this with your actual data source)
-const initialData = [
-    { id: "1", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "2", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "3", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "4", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "5", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "6", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "7", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "8", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "9", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "10", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "11", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "12", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "13", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "14", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "15", roomType: "A", roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-];
+import { GetAllBookingWaitCheckIn } from "../../../api/booking/bookingAction";
+import { useDispatch, useSelector } from "react-redux";
+const formatDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`; // Format as DD-MM-YYYY
+};
 const ReportCheckInAdmin = () => {
+    const dispatch = useDispatch();
+    const [bookingData, setBookingData] = useState([]);
+    const { booking } = useSelector((state) => state.booking);
+
+    useEffect(() => {
+        dispatch(GetAllBookingWaitCheckIn());
+        setBookingData(booking || []);
+    }, [dispatch]);
+
+    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-    const totalPages = Math.ceil(initialData.length / itemsPerPage);
+    const supplierArray = booking || [];
+    const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = initialData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = supplierArray.slice(indexOfFirstItem, indexOfLastItem);
 
+    // Handle next and previous page
     const nextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
@@ -43,7 +44,7 @@ const ReportCheckInAdmin = () => {
     };
 
     const exportToExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(initialData);
+        const ws = XLSX.utils.json_to_sheet(bookingData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'CheckIn');
         XLSX.writeFile(wb, 'CheckIn_data.xlsx');
@@ -55,7 +56,7 @@ const ReportCheckInAdmin = () => {
             <div className="flex flex-col justify-center items-center">
                 <p className="px-36 mt-10 text-2xl">ຂໍ້ມູນການແຈ້ງເຂົ້າ</p>
                 <div className="flex justify-between items-center w-full px-36">
-                    <p className=" mt-10 text-xl">ຈຳນວນການແຈ້ງເຂົ້າທັງໝົດ: {initialData.length} ຄົນ</p>
+                    <p className=" mt-10 text-xl">ຈຳນວນການແຈ້ງເຂົ້າທັງໝົດ: {bookingData.length} ຄົນ</p>
                     <button
                         onClick={exportToExcel}
                         className="px-4 py-2 bg-blue-500 text-black rounded mt-5 border border-black items-center flex justify-center"
@@ -78,14 +79,14 @@ const ReportCheckInAdmin = () => {
                         </thead>
                         <tbody className="bg-white">
                             {currentItems.map((item) => (
-                                <tr key={item.id}>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.id}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.roomNumber}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.roomType}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.name}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.bookingType}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.checkInDate}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.bookingDate}</td>
+                                <tr key={item.Booking_ID}>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Booking_ID}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Room_Number}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Type_name}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.First_name + item.Last_name}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Type_Booking === 1 ? "ເປັນມື້" : item.status === 2 ? "ເປັນເດືອນ" : "ເປັນປີ"}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{formatDate(item.Check_IN)}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{formatDate(item.Create_Date)}</td>
 
                                 </tr>
                             ))}
@@ -100,7 +101,9 @@ const ReportCheckInAdmin = () => {
                         <IoIosArrowBack />
                     </div>
                     <div className="text-base font-light mx-5">
-                        {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, initialData.length)} of {initialData.length}
+                    {indexOfFirstItem + 1} -{" "}
+                        {Math.min(indexOfLastItem, supplierArray.length)} of{" "}
+                        {supplierArray.length}
                     </div>
                     <div
                         className="items-center justify-center flex cursor-pointer"

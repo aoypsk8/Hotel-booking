@@ -5,34 +5,24 @@ import { TiPlus } from "react-icons/ti";
 import ReloadButton from "../../component/reload";
 import ic_edit from "../../../assets/icons/editI.svg";
 import ic_delete from "../../../assets/icons/deleteI.svg";
-import Swal from "sweetalert2";
-import AddTypeDialog from "./dialogManage/type/addType";
-import EditTypeDialog from "./dialogManage/type/editType";
 import EditTCustomerDialog from "./dialogManage/customer/editCustomer";
 import AddCustomerDialog from "./dialogManage/customer/addCustomer";
+import { useDispatch, useSelector } from "react-redux";
+import { DeleteCustomerA, GetAllCustomerA } from "../../../api/Customer/customerAAction";
+import Swal from "sweetalert2";
 
-const initialData = [
-    { id: "1", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "2", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "3", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "4", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "5", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "6", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "7", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "8", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "9", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "10", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "11", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "12", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "13", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "14", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "15", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", email: "a@gmail.com",idPassport:"1241245412413213", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-];
 
 const ManageCustomersAdmin = () => {
+    const dispatch = useDispatch();
+    const [customerData, setCustomerData] = useState([]);
+    const { customer } = useSelector((state) => state.customer);
+
+    useEffect(() => {
+        dispatch(GetAllCustomerA());
+        setCustomerData(customer || []);
+    }, [dispatch]);
+
     const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filteredSaleData, setFilteredSaleData] = useState(initialData);
 
     useEffect(() => {
         setLoading(true);
@@ -40,31 +30,22 @@ const ManageCustomersAdmin = () => {
             setLoading(false);
         }, 2000);
     }, []);
-    useEffect(() => {
-        const results = initialData.filter(item =>
-            item.id.includes(searchQuery) ||
-            item.idPassport.includes(searchQuery) ||
-            item.email.includes(searchQuery) ||
-            item.phoneNumber.includes(searchQuery) ||
-            item.name.includes(searchQuery) ||
-            item.surname.includes(searchQuery) 
-        );
-        setFilteredSaleData(results);
-    }, [searchQuery]);
 
+    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-    const totalPages = Math.ceil(filteredSaleData.length / itemsPerPage);
+    const supplierArray = customer || [];
+    const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredSaleData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = supplierArray.slice(indexOfFirstItem, indexOfLastItem);
 
+    // Handle next and previous page
     const nextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
         }
     };
-
     const prevPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
@@ -92,23 +73,6 @@ const ManageCustomersAdmin = () => {
         setSelectedItem(null);
     };
 
-    const handleDelete = (item) => {
-        Swal.fire({
-            title: "ທ່ານຕ້ອງການລົບ?",
-            text: "ທ່ານຕ້ອງການລົບບໍ່!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "ລົບ ! ",
-            cancelButtonText: "ຍົກເລີກ",
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                // Perform the delete action here
-            }
-        });
-    };
-
     return (
         <>
             <AdminMenu />
@@ -125,8 +89,6 @@ const ManageCustomersAdmin = () => {
                             type="search"
                             className="block w-full p-4 ps-10 text-sm text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="ຄົ້ນຫາ"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                     <div className="flex">
@@ -156,12 +118,12 @@ const ManageCustomersAdmin = () => {
                     <tbody className="bg-white">
                         {currentItems.map((item) => (
                             <tr key={item.id}>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.id}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.name}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.surname}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.phoneNumber}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.email}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.idPassport}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Cus_ID}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.First_name}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Last_name}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Phone_Number}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Email}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Passport}</td>
                                 <td className="border border-btnn border-opacity-50 py-2 text-center font-light flex justify-center">
                                     <div
                                         className="flex items-center justify-center w-16 h-7 bg-white rounded-lg text-primaryColor text-sm ml-3 border border-opacity-20 hover:cursor-pointer"
@@ -173,7 +135,22 @@ const ManageCustomersAdmin = () => {
                                     <button
                                         type="button"
                                         className="flex items-center justify-center w-16 h-7 bg-white rounded-lg text-redBottle text-sm ml-3 border border-opacity-20"
-                                        onClick={() => handleDelete(item)}
+                                        onClick={() => {
+                                            Swal.fire({
+                                                title: "ທ່ານຕ້ອງການລົບ?",
+                                                text: "ທ່ານຕ້ອງການລົບບໍ່!",
+                                                icon: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonColor: "#3085d6",
+                                                cancelButtonColor: "#d33",
+                                                confirmButtonText: "ລົບ  ! ",
+                                                cancelButtonText: "ຍົກເລີກ",
+                                            }).then(async (result) => {
+                                                if (result.isConfirmed) {
+                                                    dispatch(DeleteCustomerA(item.Cus_ID));
+                                                }
+                                            });
+                                        }}
                                     >
                                         <img src={ic_delete} alt="" className="w-5 h-5" />
                                         ລົບ
@@ -192,7 +169,9 @@ const ManageCustomersAdmin = () => {
                     <IoIosArrowBack />
                 </div>
                 <div className="text-base font-light mx-5">
-                    {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredSaleData.length)} of {filteredSaleData.length}
+                    {indexOfFirstItem + 1} -{" "}
+                    {Math.min(indexOfLastItem, supplierArray.length)} of{" "}
+                    {supplierArray.length}
                 </div>
                 <div
                     className="items-center justify-center flex cursor-pointer"
@@ -202,7 +181,7 @@ const ManageCustomersAdmin = () => {
                 </div>
             </div>
             <AddCustomerDialog visible={visible} hideDialog={hideDialog} />
-            <EditTCustomerDialog visible={visibleEdit} hideDialog={hideDialogEdit} data={selectedItem}/>
+            <EditTCustomerDialog visible={visibleEdit} hideDialog={hideDialogEdit} data={selectedItem} />
         </>
     );
 };

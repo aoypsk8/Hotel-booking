@@ -8,18 +8,18 @@ function FooterSide() {
         <h1 className="text-white text-3xl font-semibold ">ຕິດຕໍ່ພວກເຮົາ</h1>
         <div className="flex justify-around px-32 mt-10 items-center">
           <div className="text-lg text-white">
-            <p>+856 020 59 660 111</p>
+            <p>+856 20 596 601 11</p>
             <p> +856 020 527 688 34</p>
           </div>
           <div className="text-lg text-white">
-            <p>Anyiestate2020@gmail.com
+            <p>Anyiestate2020@gmail.com@gmail.com
             </p>
             <p> AnyiEstate@gmail.com</p>
           </div>
           <div className="text-lg text-white">
-            <p>ບ້ານຈອມມະນີໃຕ້</p>
-            <p> ເມືອງໄຊທານີ</p>
-            <p> ແຂວງນະຄອນຫລວງວຽງຈັນ</p>
+            <p>ບ້ານ ສີດຳດວນ  </p>
+            <p> ເມືອງ ຈັນທະບູລີ</p>
+            <p> ແຂວງນະຄອນຫຼວງວຽງຈັນ</p>
           </div>
         </div>
         <div className="w-full h-[0.5px] bg-btnn mt-5 "></div>

@@ -1,52 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { useDispatch } from 'react-redux';
+import { CreateEmployee } from '../../../../../api/employee/employeeAction';
 
 const AddEmployeeDialog = ({ visible, hideDialog }) => {
+    const dispatch = useDispatch();
     const [selectedName, setSelectedName] = useState('');
     const [selectedSurname, setSelectedSurname] = useState('');
     const [selectedphoneNumber, setSelectedphoneNumber] = useState('');
     const [selectedAddress, setSelectedAddress] = useState('');
+    const [selectedPassword, setSelectedPassword] = useState('');
     const [selectedimage, setSelectedimage] = useState('');
 
-
-    // Debugging: Log current state
     useEffect(() => {
     }, [selectedName, selectedSurname, selectedphoneNumber, selectedAddress, selectedimage]);
 
-    const handleNameChange = (e) => {
-        setSelectedName(e.target.value);
-    };
+    const handleNameChange = (e) => setSelectedName(e.target.value);
+    const handleSurnameChange = (e) => setSelectedSurname(e.target.value);
+    const handlephoneNumberChange = (e) => setSelectedphoneNumber(e.target.value);
+    const handleAddressChange = (e) => setSelectedAddress(e.target.value);
+    const handlePasswordChange = (e) => setSelectedPassword(e.target.value);
+    const handleImageChange = (e) => setSelectedimage(e.target.files[0]);
 
-    const handleSurnameChange = (e) => {
-        setSelectedSurname(e.target.value);
-    };
-
-    const handlephoneNumberChange = (e) => {
-        setSelectedphoneNumber(e.target.value);
-    };
-    const handleAddressChange = (e) => {
-        setSelectedAddress(e.target.value);
+    const handleSubmit = () => {
+        console.log(selectedimage);
+        const formData = new FormData();
+        formData.append('Emp_FirstName', selectedName);
+        formData.append('Emp_LastName', selectedSurname);
+        formData.append('Phone_Number', selectedphoneNumber);
+        formData.append('Emp_Address', selectedAddress);
+        formData.append('Password', selectedPassword);
+        formData.append('image', selectedimage);
+        dispatch(CreateEmployee(formData)).then(() => {
+            hideDialog();
+        }).catch(error => {
+            console.error('Error updating type:', error);
+            hideDialog();
+        });
     };
 
     return (
         <Dialog
-            header="Update Employee"
+            header="ັAdd Employee"
             visible={visible}
             style={{ width: '50rem' }}
             modal
             onHide={hideDialog}
         >
             <div>
-                <div className="flex justify-between items-center mt-2 px-10">
-                    <p className='text-lg'>ລະຫັດພະນັກງານ</p>
-                    <input
-                        type="text"
-                        className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        value={data.id || ''}
-                        readOnly
-                    />
-                </div>
+
                 <div className="flex justify-between items-center mt-2 px-10">
                     <p className='text-lg'>ຊື່</p>
                     <input
@@ -84,16 +87,22 @@ const AddEmployeeDialog = ({ visible, hideDialog }) => {
                     />
                 </div>
                 <div className="flex justify-between items-center mt-2 px-10">
-                    <p className='text-lg'>ຮູບພາບ</p>
+                    <p className='text-lg'>ລະຫັດ</p>
                     <input
-                        readOnly
                         type="text"
                         className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-
+                        value={selectedPassword}
+                        onChange={handlePasswordChange}
                     />
                 </div>
-
-
+                <div className="flex justify-between items-center mt-2 px-10" >
+                    <p className='text-lg'>ຮູບພາບ</p>
+                    <input
+                        type="file"
+                        className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        onChange={handleImageChange}
+                    />
+                </div>
                 <div className="w-full flex justify-end items-center mt-10 mb-5">
                     <Button
                         type="button"
@@ -105,6 +114,7 @@ const AddEmployeeDialog = ({ visible, hideDialog }) => {
                     <Button
                         type="button"
                         className="flex items-center justify-center w-56 h-12 bg-green rounded-lg text-white font-semibold ml-3"
+                        onClick={() => handleSubmit()}
                     >
                         <span>ບັນທືກ</span>
                     </Button>

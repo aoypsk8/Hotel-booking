@@ -118,7 +118,7 @@ const EditTypeDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="text"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={formatNumber(selectedPriceDay)}
+                            value={selectedPriceDay}
                             onChange={handlePriceDayChange}
                         />
                     </div>
@@ -127,7 +127,7 @@ const EditTypeDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="text"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={formatNumber(selectedPriceMonth)}
+                            value={selectedPriceMonth}
                             onChange={handlePriceMonthChange}
                         />
                     </div>
@@ -136,7 +136,7 @@ const EditTypeDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="text"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={formatNumber(selectedPriceYear)}
+                            value={selectedPriceYear}
                             onChange={handlePriceYearChange}
                         />
                     </div>

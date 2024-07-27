@@ -17,7 +17,7 @@ function CustomerReport() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(4);
+  const [itemsPerPage] = useState(10);
   const supplierArray = customer || [];
   const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -41,7 +41,7 @@ function CustomerReport() {
       <p className=" mb-6 text-5xl">ລາຍງານຜູ້ໃຊ້ທັງຫມົດ</p>
       <div className="w-full h-3/4  border border-lineColor py-3 rounded-md flex flex-col justify-between mt-3">
         <div className="flex justify-between items-center px-5 pb-5">
-          <p className="text-xl w-1/3">ລາຍການຂໍ້ມູນພະນັັດງານທັງຫມົດ</p>
+          <p className="text-xl w-1/3">ລາຍການຂໍ້ມູນພະນັັດງານທັງຫມົດ888</p>
           
         </div>
         <div className="border border-lineColor w-full py-3  bg-head flex justify-between items-center px-5 ">

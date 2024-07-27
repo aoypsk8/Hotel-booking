@@ -1,34 +1,37 @@
 import AdminMenu from "../homeAdmin";
 import { useState, useEffect } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
+import { GetAllEquipment } from "../../../api/equipment/equipmentAction";
 
-// Example data (replace this with your actual data source)
-const initialData = [
-    { id: "1", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "2", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "3", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "4", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "5", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "6", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "7", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "8", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "9", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "10", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "11", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "12", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "13", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "14", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-    { id: "15", name: "water", amount: 3, price: 10000, tota: 30000, date: "31/10/2024" },
-];
+const formatDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`; // Format as DD-MM-YYYY
+};
 const ReportEquipmentAdmin = () => {
+    const dispatch = useDispatch();
+    const [equipmentData, setequipmentData] = useState([]);
+    const { equipment } = useSelector((state) => state.equipment);
+
+    useEffect(() => {
+        dispatch(GetAllEquipment());
+        setequipmentData(equipment || []);
+    }, [dispatch]);
+
+    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-    const totalPages = Math.ceil(initialData.length / itemsPerPage);
+    const supplierArray = equipment || [];
+    const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = initialData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = supplierArray.slice(indexOfFirstItem, indexOfLastItem);
 
+    // Handle next and previous page
     const nextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
@@ -42,7 +45,7 @@ const ReportEquipmentAdmin = () => {
     };
 
     const exportToExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(initialData);
+        const ws = XLSX.utils.json_to_sheet(equipmentData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Equipment');
         XLSX.writeFile(wb, 'Equipment_data.xlsx');
@@ -54,7 +57,7 @@ const ReportEquipmentAdmin = () => {
             <div className="flex flex-col justify-center items-center">
                 <p className="px-36 mt-10 text-2xl">ຂໍ້ມູນອຸປະກອນ</p>
                 <div className="flex justify-between items-center w-full px-36">
-                    <p className=" mt-10 text-xl">ຈຳນວນອຸປະກອນທັງໝົດ: {initialData.length} ຄົນ</p>
+                    <p className=" mt-10 text-xl">ຈຳນວນອຸປະກອນທັງໝົດ: {equipmentData.length} ຄົນ</p>
                     <button
                         onClick={exportToExcel}
                         className="px-4 py-2 bg-blue-500 text-black rounded mt-5 border border-black items-center flex justify-center"
@@ -77,13 +80,13 @@ const ReportEquipmentAdmin = () => {
                         </thead>
                         <tbody className="bg-white">
                             {currentItems.map((item) => (
-                                <tr key={item.id}>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.id}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.name}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.date}</td>
+                                <tr key={item.EquipmentID}>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.EquipmentID}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.EquipmentName}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{formatDate(item.datecreate)}</td>
                                     <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.price}</td>
                                     <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.amount}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.tota}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.total}</td>
 
                                 </tr>
                             ))}
@@ -98,7 +101,9 @@ const ReportEquipmentAdmin = () => {
                         <IoIosArrowBack />
                     </div>
                     <div className="text-base font-light mx-5">
-                        {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, initialData.length)} of {initialData.length}
+                    {indexOfFirstItem + 1} -{" "}
+                        {Math.min(indexOfLastItem, supplierArray.length)} of{" "}
+                        {supplierArray.length}
                     </div>
                     <div
                         className="items-center justify-center flex cursor-pointer"

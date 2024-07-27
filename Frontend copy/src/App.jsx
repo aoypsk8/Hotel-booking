@@ -28,6 +28,7 @@ import { getUserData } from "./api/authAction.jsx";
 import 'primereact/resources/themes/saga-blue/theme.css';  // You can choose a different theme if you prefer
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import ReportPayAdmin from "./screens/admin/report/pay.jsx";
 
 function App() {
   const [userData, setUserData] = useState(null);
@@ -56,9 +57,9 @@ function App() {
 
         {/* Protected Routes */}
         <Route path="/search" element={<Search />} />
-        <Route path="/cardDetail" element={<CardDetail />} />
-        <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
-        <Route path="/history" element={isAuthenticated ? <History /> : <Navigate to="/" />} />
+        <Route path="/cardDetail" element={!isAdmin ? <CardDetail /> : <Navigate to="/" />} />
+        <Route path="/profile" element={isAuthenticated && !isAdmin ? <Profile /> : <Navigate to="/" />} />
+        <Route path="/history" element={isAuthenticated && !isAdmin ? <History /> : <Navigate to="/" />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<PageHomeAdmin onSendData={handleAdminData} />} />
@@ -81,6 +82,7 @@ function App() {
         <Route path="/admin/report/return" element={isAdmin ? <ReportCheckInAdmin /> : <Navigate to="/" />} />
         <Route path="/admin/report/out" element={isAdmin ? <ReportCheckOutAdmin /> : <Navigate to="/" />} />
         <Route path="/admin/report/equipment" element={isAdmin ? <ReportEquipmentAdmin /> : <Navigate to="/" />} />
+        <Route path="/admin/report/pay" element={isAdmin ? <ReportPayAdmin /> : <Navigate to="/" />} />
 
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />

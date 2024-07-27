@@ -5,7 +5,7 @@ import MonthlyBookingDialog from './dialog/MonthlyBookingDialog';
 import YearlyBookinDialog from './dialog/YearlyBookinDialog';
 import DailyBookingDialog from './dialog/DailyBookingDialog';
 
-const BookingDialog = ({ visible, hideDialog }) => {
+const BookingDialog = ({ visible, hideDialog, data ,Cus_ID}) => {
     const [daylyDialogVisible, setDalyDialogVisible] = useState(false);
     const [monthlyDialogVisible, setMonthlyDialogVisible] = useState(false);
     const [yearDialogVisible, setYearDialogVisible] = useState(false);
@@ -24,12 +24,15 @@ const BookingDialog = ({ visible, hideDialog }) => {
 
     const handleMonthlyDialogClose = () => {
         setMonthlyDialogVisible(false);
+        hideDialog(); 
     };
     const handleYearDialogClose = () => {
         setYearDialogVisible(false);
+        hideDialog(); 
     };
     const handleDayDialogClose = () => {
         setDalyDialogVisible(false);
+        hideDialog(); 
     };
     return (
         <>
@@ -69,14 +72,20 @@ const BookingDialog = ({ visible, hideDialog }) => {
             </Dialog>
 
             <MonthlyBookingDialog
+                data={data}
+                Cus_ID={Cus_ID}
                 visible={monthlyDialogVisible}
                 hideDialog={handleMonthlyDialogClose}
             />
             <YearlyBookinDialog
+                data={data}
                 visible={yearDialogVisible}
                 hideDialog={handleYearDialogClose}
+                Cus_ID={Cus_ID}
             />
             <DailyBookingDialog
+                data={data}
+                Cus_ID={Cus_ID}
                 visible={daylyDialogVisible}
                 hideDialog={handleDayDialogClose}
             />

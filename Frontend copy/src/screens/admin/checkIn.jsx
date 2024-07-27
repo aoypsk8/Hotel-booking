@@ -3,59 +3,37 @@ import ReloadButton from "../component/reload";
 import AdminMenu from "./homeAdmin";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import CheckInDialog from "./manage/dialog/checkInDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { GetAllBookingWaitCheckIn } from "../../api/booking/bookingAction";
 
 // Example data (replace this with your actual data source)
-const initialData = [
-    { id: "1", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "2", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "3", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "4", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "5", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "6", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "7", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "8", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "9", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "10", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "11", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "12", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "13", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "14", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-    { id: "15", roomType: "A",roomNumber: "123A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024",dataBooking:"03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000 },
-];
+const formatDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`; // Format as DD-MM-YYYY
+};
 
 const CheckInAdmin = () => {
-    const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filteredSaleData, setFilteredSaleData] = useState(initialData);
+    const dispatch = useDispatch();
+    const [bookingData, setBookingData] = useState([]);
+    const { booking } = useSelector((state) => state.booking);
 
     useEffect(() => {
-        // Simulate fetching data
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000); // Simulate a 2-second fetch time
-    }, []);
-
-    useEffect(() => {
-        const results = initialData.filter(item =>
-            item.id.includes(searchQuery) ||
-            item.roomType.includes(searchQuery) ||
-            item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.bookingType.includes(searchQuery) ||
-            item.checkInDate.includes(searchQuery) ||
-            item.bookingDate.includes(searchQuery)
-        );
-        setFilteredSaleData(results);
-    }, [searchQuery]);
+        dispatch(GetAllBookingWaitCheckIn());
+        setBookingData(booking || []);
+    }, [dispatch]);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-
-    const totalPages = Math.ceil(filteredSaleData.length / itemsPerPage);
+    const supplierArray = booking || [];
+    const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredSaleData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = supplierArray.slice(indexOfFirstItem, indexOfLastItem);
+
 
     // Handle next and previous page
     const nextPage = () => {
@@ -100,11 +78,8 @@ const CheckInAdmin = () => {
                             type="search"
                             className="block w-full p-4 ps-10 text-sm text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="ຄົ້ນຫາ"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <ReloadButton onClick={() => setLoading(true)} loading={loading} />
                 </div>
                 <table className="w-full mt-10">
                     <thead>
@@ -122,13 +97,13 @@ const CheckInAdmin = () => {
                     <tbody className="bg-white">
                         {currentItems.map((item) => (
                             <tr key={item.id}>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.id}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.roomNumber}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.roomType}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.name}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.bookingType}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.checkInDate}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.bookingDate}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Booking_ID}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Room_Number}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Type_name}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.First_name + item.First_name}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Type_Booking === 1 ? "ເປັນມື້" : item.status === 2 ? "ເປັນເດືອນ" : "ເປັນປີ"}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{formatDate(item.Check_IN)}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{formatDate(item.Create_Date)}</td>
                                 <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light hover:cursor-pointer" onClick={() => showDialog(item)}>
                                     <div className="w-full ">
                                         <div className=" flex justify-center items-center border rounded-xl border-primaryColor">
@@ -159,7 +134,9 @@ const CheckInAdmin = () => {
                     <IoIosArrowBack />
                 </div>
                 <div className="text-base font-light mx-5">
-                    {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredSaleData.length)} of {filteredSaleData.length}
+                    {indexOfFirstItem + 1} -{" "}
+                    {Math.min(indexOfLastItem, supplierArray.length)} of{" "}
+                    {supplierArray.length}
                 </div>
                 <div
                     className="items-center justify-center flex cursor-pointer"

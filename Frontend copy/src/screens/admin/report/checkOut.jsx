@@ -2,34 +2,36 @@ import AdminMenu from "../homeAdmin";
 import { useState, useEffect } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import * as XLSX from 'xlsx';
-
-// Example data (replace this with your actual data source)
-const initialData = [
-    { id: "1", roomNumber: "123A", name: "John Doe Phono", phoneNumber: "2052768832" },
-    { id: "2", roomNumber: "123B", name: "Jane Doe Phono", phoneNumber: "2052768832" },
-    { id: "3", roomNumber: "123C", name: "Alice Phono", phoneNumber: "2052768832" },
-    { id: "4", roomNumber: "123D", name: "Bob Phono", phoneNumber: "2052768832" },
-    { id: "5", roomNumber: "123E", name: "Charlie Phono", phoneNumber: "2052768832" },
-    { id: "6", roomNumber: "123F", name: "David Phono", phoneNumber: "2052768832" },
-    { id: "7", roomNumber: "123G", name: "Eve Phono", phoneNumber: "2052768832" },
-    { id: "8", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "9", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "10", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "11", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "12", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "13", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "14", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "15", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-];
+import { GetAllBookingWaitCheckOut } from "../../../api/booking/bookingAction";
+import { useDispatch, useSelector } from "react-redux";
+const formatDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`; // Format as DD-MM-YYYY
+};
 
 const ReportCheckOutAdmin = () => {
+    const dispatch = useDispatch();
+    const [bookingData, setBookingData] = useState([]);
+    const { booking } = useSelector((state) => state.booking);
+
+    useEffect(() => {
+        dispatch(GetAllBookingWaitCheckOut());
+        setBookingData(booking || []);
+    }, [dispatch]);
+
+    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-    const totalPages = Math.ceil(initialData.length / itemsPerPage);
+    const supplierArray = booking || [];
+    const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = initialData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = supplierArray.slice(indexOfFirstItem, indexOfLastItem);
 
+    // Handle next and previous page
     const nextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
@@ -43,7 +45,7 @@ const ReportCheckOutAdmin = () => {
     };
 
     const exportToExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(initialData);
+        const ws = XLSX.utils.json_to_sheet(bookingData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Checkout');
         XLSX.writeFile(wb, 'Checkout_data.xlsx');
@@ -55,7 +57,7 @@ const ReportCheckOutAdmin = () => {
             <div className="flex flex-col justify-center items-center">
                 <p className="px-36 mt-10 text-2xl">ຂໍ້ມູນການແຈ້ງອອກ</p>
                 <div className="flex justify-between items-center w-full px-36">
-                    <p className=" mt-10 text-xl">ຈຳນວນການແຈ້ງອອກທັງໝົດ: {initialData.length} ຄົນ</p>
+                    <p className=" mt-10 text-xl">ຈຳນວນການແຈ້ງອອກທັງໝົດ: {bookingData.length} ຄົນ</p>
                     <button
                         onClick={exportToExcel}
                         className="px-4 py-2 bg-blue-500 text-black rounded mt-5 border border-black items-center flex justify-center"
@@ -76,11 +78,11 @@ const ReportCheckOutAdmin = () => {
                         </thead>
                         <tbody className="bg-white">
                             {currentItems.map((item) => (
-                                <tr key={item.id}>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.id}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.roomNumber}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.name}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.phoneNumber}</td>
+                                <tr key={item.Booking_ID}>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Booking_ID}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Room_Number}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.First_name + item.Last_name}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Phone_Number}</td>
 
                                 </tr>
                             ))}
@@ -95,7 +97,9 @@ const ReportCheckOutAdmin = () => {
                         <IoIosArrowBack />
                     </div>
                     <div className="text-base font-light mx-5">
-                        {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, initialData.length)} of {initialData.length}
+                    {indexOfFirstItem + 1} -{" "}
+                        {Math.min(indexOfLastItem, supplierArray.length)} of{" "}
+                        {supplierArray.length}
                     </div>
                     <div
                         className="items-center justify-center flex cursor-pointer"

@@ -20,7 +20,7 @@ const ManageRoomsAdmin = () => {
     useEffect(() => {
         dispatch(GetAllRoom());
         setRoomData(room || []);
-    }, [dispatch]);
+    }, [dispatch,loading]);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -146,7 +146,6 @@ const ManageRoomsAdmin = () => {
                                                     dispatch(DeleteRoom(item.Room_ID));
                                                 }
                                             });
-
                                         }}
                                     >
                                         <img src={ic_delete} alt="" className="w-5 h-5" />

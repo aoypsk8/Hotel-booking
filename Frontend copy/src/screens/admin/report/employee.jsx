@@ -1,48 +1,44 @@
 import AdminMenu from "../homeAdmin";
 import { useState, useEffect } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
-
-const initialData = [
-    { id: "1", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "2", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "3", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "4", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "5", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "6", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "7", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "8", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "9", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "10", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "11", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "12", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "13", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "14", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-    { id: "15", name: "1Bed", surname: "15x41", phoneNumber: "20 52768832", address: "Vientaine,Laos", image: "https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/10/condo-vs-apartment.jpeg.jpg" },
-];
+import { GetAllEmployee } from "../../../api/employee/employeeAction";
 
 const ReportEmployeeAdmin = () => {
+    const dispatch = useDispatch();
+    const [employeeData, setEmployeeData] = useState([]);
+    const { employee } = useSelector((state) => state.employee);
+
+    useEffect(() => {
+        dispatch(GetAllEmployee());
+        setEmployeeData(employee || []);
+    }, [dispatch]);
+
+
+
+    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-    const totalPages = Math.ceil(initialData.length / itemsPerPage);
+    const supplierArray = employee || [];
+    const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = initialData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = supplierArray.slice(indexOfFirstItem, indexOfLastItem);
 
+    // Handle next and previous page
     const nextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
         }
     };
-
     const prevPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
     };
-
     const exportToExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(initialData);
+        const ws = XLSX.utils.json_to_sheet(employeeData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Employee');
         XLSX.writeFile(wb, 'Employee_data.xlsx');
@@ -54,7 +50,7 @@ const ReportEmployeeAdmin = () => {
             <div className="flex flex-col justify-center items-center">
                 <p className="px-36 mt-10 text-2xl">ຂໍ້ມູນພະນັກງານ</p>
                 <div className="flex justify-between items-center w-full px-36">
-                    <p className=" mt-10 text-xl">ຈຳນວນພະນັກງານທັງໝົດ: {initialData.length} ຄົນ</p>
+                    <p className=" mt-10 text-xl">ຈຳນວນພະນັກງານທັງໝົດ: {employeeData.length} ຄົນ</p>
                     <button
                         onClick={exportToExcel}
                         className="px-4 py-2 bg-blue-500 text-black rounded mt-5 border border-black items-center flex justify-center"
@@ -76,12 +72,12 @@ const ReportEmployeeAdmin = () => {
                         </thead>
                         <tbody className="bg-white">
                             {currentItems.map((item) => (
-                                <tr key={item.id}>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.id}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.name}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.surname}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.phoneNumber}</td>
-                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.address}</td>
+                                <tr key={item.Emp_ID}>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Emp_ID}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Emp_FirstName}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Emp_LastName}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Phone_Number}</td>
+                                    <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Emp_Address}</td>
 
                                 </tr>
                             ))}
@@ -96,7 +92,9 @@ const ReportEmployeeAdmin = () => {
                         <IoIosArrowBack />
                     </div>
                     <div className="text-base font-light mx-5">
-                        {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, initialData.length)} of {initialData.length}
+                    {indexOfFirstItem + 1} -{" "}
+                    {Math.min(indexOfLastItem, supplierArray.length)} of{" "}
+                    {supplierArray.length}
                     </div>
                     <div
                         className="items-center justify-center flex cursor-pointer"

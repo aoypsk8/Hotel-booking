@@ -3,61 +3,36 @@ import { useState, useEffect } from "react";
 import ReloadButton from "../component/reload";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import CheckInNowDialog from "./manage/dialog/CheckInNowDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { GetAllBookingWait } from "../../api/booking/bookingAction";
 
-// Example data (replace this with your actual data source)
-const initialData = [
-    { id: "1", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "2", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 2 },
-    { id: "3", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 2 },
-    { id: "4", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "5", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "6", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 2 },
-    { id: "7", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "8", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "9", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 2 },
-    { id: "10", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "11", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "12", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "13", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "14", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 1 },
-    { id: "15", roomType: "A", name: "John Doe", roomBooking: "Month", amount: 1, bookingType: "Type1", checkInDate: "01/01/2024", checkOutDate: "02/01/2024", dataBooking: "03/01/2024", bookingDate: "25/12/2023", phoneNumer: "2052768831", email: "a@gmai.com", total: 1000000, status: 3 },
-];
+  const formatDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`; // Format as DD-MM-YYYY
+  };
+
 
 const CheckInNowAdmin = () => {
-    const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState(""); // New state for status filter
-    const [filteredSaleData, setFilteredSaleData] = useState(initialData);
+    const dispatch = useDispatch();
+    const [bookingData, setBookingData] = useState([]);
+    const { booking } = useSelector((state) => state.booking);
 
     useEffect(() => {
-        // Simulate fetching data
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000); // Simulate a 2-second fetch time
-    }, []);
-
-    useEffect(() => {
-        const results = initialData.filter(item =>
-            (item.id.includes(searchQuery) ||
-                item.roomType.includes(searchQuery) ||
-                item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                item.bookingType.includes(searchQuery) ||
-                item.checkInDate.includes(searchQuery) ||
-                item.bookingDate.includes(searchQuery)) &&
-            (selectedStatus === "" || item.status === parseInt(selectedStatus))
-        );
-        setFilteredSaleData(results);
-    }, [searchQuery, selectedStatus]); // Include selectedStatus in dependency array
+        dispatch(GetAllBookingWait());
+        setBookingData(booking || []);
+    }, [dispatch]);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-
-    const totalPages = Math.ceil(filteredSaleData.length / itemsPerPage);
+    const supplierArray = booking || [];
+    const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredSaleData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = supplierArray.slice(indexOfFirstItem, indexOfLastItem);
 
     // Handle next and previous page
     const nextPage = () => {
@@ -91,21 +66,6 @@ const CheckInNowAdmin = () => {
             <AdminMenu />
             <p className="px-36 mt-10">ຄົ້ນຫາຂໍ້ມູນການຈອງ</p>
             <form className="w-full px-36 mt-5">
-                <div className="flex justify-between">
-                    <div className="relative">
-                        <select
-                            className="block p-4 text-sm text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500"
-                            onChange={(e) => setSelectedStatus(e.target.value)}
-                            value={selectedStatus}
-                        >
-                            <option value="">ທຸກສະຖານະ</option>
-                            <option value="1">ລໍຖ້າດຳເນີນການ</option>
-                            <option value="2">ອະນຸມັດແລ້ວ</option>
-                            <option value="3">ຍົກເລີກ</option>
-                        </select>
-                    </div>
-                    <ReloadButton onClick={() => setLoading(true)} loading={loading} />
-                </div>
                 <table className="w-full mt-10">
                     <thead>
                         <tr>
@@ -122,14 +82,14 @@ const CheckInNowAdmin = () => {
                     <tbody className="bg-white">
                         {currentItems.map((item) => (
                             <tr key={item.id}>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.id}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.roomType}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.name}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.bookingType}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.checkInDate}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.bookingDate}</td>
-                                <td className={`border border-btnn border-opacity-50 px-4 py-2 text-center font-black ${item.status === 1 ? 'text-yellowBottle' : item.status === 2 ? 'text-scueecssColor' : 'text-redBottle'}`}>
-                                    {item.status === 1 ? "ລໍຖ້າດຳເນີນການ" : item.status === 2 ? "ອະນຸມັດແລ້ວ" : "ຍົກເລີກແລ້ວ"}
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Booking_ID}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Type_name}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.First_name + item.First_name}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Type_Booking === 1 ? "ເປັນມື້" : item.status === 2 ? "ເປັນເດືອນ" : "ເປັນປີ"}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{formatDate(item.Check_IN)}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{formatDate(item.Create_Date)}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-black text-yellowBottle">
+                                    ລໍຖ້າດຳເນີນການ
                                 </td>
                                 <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light hover:cursor-pointer" onClick={() => showDialog(item)}>
                                     <div className="w-full ">
@@ -161,7 +121,9 @@ const CheckInNowAdmin = () => {
                     <IoIosArrowBack />
                 </div>
                 <div className="text-base font-light mx-5">
-                    {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredSaleData.length)} of {filteredSaleData.length}
+                    {indexOfFirstItem + 1} -{" "}
+                    {Math.min(indexOfLastItem, supplierArray.length)} of{" "}
+                    {supplierArray.length}
                 </div>
                 <div
                     className="items-center justify-center flex cursor-pointer"

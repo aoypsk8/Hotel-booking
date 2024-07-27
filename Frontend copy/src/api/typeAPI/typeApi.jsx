@@ -8,6 +8,18 @@ export const getAllType = async () => {
   return response.data;
 };
 
+export const search = async (fromDate, toDate, typeroom_id) => {
+  const response = await axios.post(`${BASE_URL}/searchAvailableRooms`, {
+    "fromDate": fromDate,
+    "toDate": toDate,
+    "typeRoom_ID": typeroom_id
+  }
+  );
+  console.log(`response ${response.data}`);
+
+  return response.data;
+};
+
 export const createType = async (formData) => {
   const response = await axios.post(
     `${BASE_URL}/type/create`,

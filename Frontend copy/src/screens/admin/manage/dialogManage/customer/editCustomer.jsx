@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { useDispatch } from 'react-redux';
+import { UpdateCustomerA } from '../../../../../api/Customer/customerAAction';
 
 const EditTCustomerDialog = ({ visible, hideDialog, data }) => {
+    const dispatch = useDispatch();
     const [selectedName, setSelectedName] = useState('');
     const [selectedSurname, setSelectedSurname] = useState('');
     const [selectedphoneNumber, setSelectedphoneNumber] = useState('');
     const [selectedEmail, setSelectedEmail] = useState('');
+    const [selectedPassport, setSelectedPassport] = useState('');
     const [selectedimage, setSelectedimage] = useState('');
 
     useEffect(() => {
         if (data) {
-            setSelectedName(data.name || '');
-            setSelectedSurname(data.surname || '');
-            setSelectedphoneNumber(data.phoneNumber || '');
-            setSelectedEmail(data.email || '');
-            // setSelectedimage(data.area || '');
+            setSelectedName(data.First_name || '');
+            setSelectedSurname(data.Last_name || '');
+            setSelectedphoneNumber(data.Phone_Number || '');
+            setSelectedEmail(data.Email || '');
+            setSelectedPassport(data.Passport || '');
+            setSelectedimage(data.Cus_Profile || '');
         }
     }, [data]);
 
@@ -23,21 +28,42 @@ const EditTCustomerDialog = ({ visible, hideDialog, data }) => {
     useEffect(() => {
     }, [selectedName, selectedSurname, selectedphoneNumber, selectedEmail, selectedimage]);
 
-    const handleNameChange = (e) => {
-        setSelectedName(e.target.value);
-    };
+    const handleNameChange = (e) => setSelectedName(e.target.value);
+    const handleSurnameChange = (e) => setSelectedSurname(e.target.value);
+    const handlephoneNumberChange = (e) => setSelectedphoneNumber(e.target.value);
+    const handleEmailChange = (e) => setSelectedEmail(e.target.value);
+    const handlePassportChange = (e) => setSelectedPassport(e.target.value);
+    const handleImageChange = (e) => setSelectedimage(e.target.files[0]);
 
-    const handleSurnameChange = (e) => {
-        setSelectedSurname(e.target.value);
-    };
 
-    const handlephoneNumberChange = (e) => {
-        setSelectedphoneNumber(e.target.value);
-    };
-    const handleEmailChange = (e) => {
-        setSelectedEmail(e.target.value);
-    };
 
+    const handleSubmit = () => {
+        const formData = new FormData();
+        formData.append('First_name', selectedName);
+        formData.append('Last_name', selectedSurname);
+        formData.append('Phone_Number', selectedphoneNumber);
+        formData.append('Email', selectedEmail);
+        formData.append('Passport', selectedPassport);
+        formData.append('Password', data.Password);
+        formData.append('image', selectedimage);
+        
+
+        // Dispatch the action with the formData
+        console.log(formData);
+        console.log(selectedName);
+        console.log(selectedSurname);
+        console.log(selectedphoneNumber);
+        console.log(selectedEmail);
+        console.log(selectedPassport);
+        console.log(selectedimage);
+        dispatch(UpdateCustomerA(data.Cus_ID, formData)).then(() => {
+            hideDialog();
+        }).catch(error => {
+            console.error('Error updating type:', error);
+            hideDialog();
+        });
+
+    };
     return (
         <Dialog
             header="Update Customer"
@@ -53,7 +79,7 @@ const EditTCustomerDialog = ({ visible, hideDialog, data }) => {
                         <input
                             type="text"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            value={data.id || ''}
+                            value={data.Cus_ID || ''}
                             readOnly
                         />
                     </div>
@@ -94,12 +120,21 @@ const EditTCustomerDialog = ({ visible, hideDialog, data }) => {
                         />
                     </div>
                     <div className="flex justify-between items-center mt-2 px-10">
-                        <p className='text-lg'>ຮູບພາບ</p>
+                        <p className='text-lg'>Passport</p>
                         <input
-                            readOnly
                             type="text"
                             className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={selectedPassport}
+                            onChange={handlePassportChange}
+                        />
+                    </div>
 
+                    <div className="flex justify-between items-center mt-2 px-10" >
+                        <p className='text-lg'>ຮູບພາບ</p>
+                        <input
+                            type="file"
+                            className="block w-[30rem] p-4 ps-7 text-xl text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            onChange={handleImageChange}
                         />
                     </div>
 
@@ -115,6 +150,7 @@ const EditTCustomerDialog = ({ visible, hideDialog, data }) => {
                         <Button
                             type="button"
                             className="flex items-center justify-center w-56 h-12 bg-green rounded-lg text-white font-semibold ml-3"
+                            onClick={() => handleSubmit()}
                         >
                             <span>ບັນທືກ</span>
                         </Button>

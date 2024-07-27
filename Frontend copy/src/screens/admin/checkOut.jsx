@@ -2,59 +2,30 @@ import { useState, useEffect } from "react";
 import ReloadButton from "../component/reload";
 import AdminMenu from "./homeAdmin";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import CheckInDialog from "./manage/dialog/checkInDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { GetAllBookingWaitCheckOut } from "../../api/booking/bookingAction";
 import CheckOutDialog from "./manage/dialog/checkOutDialog";
 
-// Example data (replace this with your actual data source)
-const initialData = [
-    { id: "1", roomNumber: "123A", name: "John Doe Phono", phoneNumber: "2052768832" },
-    { id: "2", roomNumber: "123B", name: "Jane Doe Phono", phoneNumber: "2052768832" },
-    { id: "3", roomNumber: "123C", name: "Alice Phono", phoneNumber: "2052768832" },
-    { id: "4", roomNumber: "123D", name: "Bob Phono", phoneNumber: "2052768832" },
-    { id: "5", roomNumber: "123E", name: "Charlie Phono", phoneNumber: "2052768832" },
-    { id: "6", roomNumber: "123F", name: "David Phono", phoneNumber: "2052768832" },
-    { id: "7", roomNumber: "123G", name: "Eve Phono", phoneNumber: "2052768832" },
-    { id: "8", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "9", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "10", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "11", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "12", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "13", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "14", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-    { id: "15", roomNumber: "123H", name: "Frank Phono", phoneNumber: "2052768832" },
-];
-
 const CheckOutAdmin = () => {
-    const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filteredSaleData, setFilteredSaleData] = useState(initialData);
+    const dispatch = useDispatch();
+    const [bookingData, setBookingData] = useState([]);
+    const { booking } = useSelector((state) => state.booking);
 
     useEffect(() => {
-        // Simulate fetching data
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000); // Simulate a 2-second fetch time
-    }, []);
-
-    useEffect(() => {
-        const results = initialData.filter(item =>
-            item.id.includes(searchQuery) ||
-            item.roomNumber.includes(searchQuery) ||
-            item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.phoneNumber.includes(searchQuery)
-        );
-        setFilteredSaleData(results);
-    }, [searchQuery]);
-
+        dispatch(GetAllBookingWaitCheckOut());
+        setBookingData(booking || []);
+    }, [dispatch]);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-
-    const totalPages = Math.ceil(filteredSaleData.length / itemsPerPage);
+    const supplierArray = booking || [];
+    const totalPages = Math.ceil(supplierArray.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredSaleData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = supplierArray.slice(indexOfFirstItem, indexOfLastItem);
+
 
     // Handle next and previous page
     const nextPage = () => {
@@ -69,16 +40,13 @@ const CheckOutAdmin = () => {
         }
     };
 
-
     // Dialog state and data
     const [visible, setVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
     const showDialog = (item) => {
-        const currentDateTime = new Date().toLocaleString();
-        setSelectedItem({ ...item, currentDateTime });
+        setSelectedItem(item);
         setVisible(true);
-
     };
 
     const hideDialog = () => {
@@ -102,16 +70,13 @@ const CheckOutAdmin = () => {
                             type="search"
                             className="block w-full p-4 ps-10 text-sm text-black border border-bgHead rounded-lg bg-bgColor focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="ຄົ້ນຫາ"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <ReloadButton onClick={() => setLoading(true)} loading={loading} />
                 </div>
                 <table className="w-full mt-10">
                     <thead>
                         <tr>
-                            <th className="border border-btnn border-opacity-50 px-4 py-2 text-center font-semibold rounded-tl-lg">ລະຫັດແຈ້ງເຂົ້ສ</th>
+                            <th className="border border-btnn border-opacity-50 px-4 py-2 text-center font-semibold rounded-tl-lg">ລະຫັດແຈ້ງເຂົ້າ</th>
                             <th className="border border-btnn border-opacity-50 px-4 py-2 text-center font-semibold">ເບີຫ້ອງ</th>
                             <th className="border border-btnn border-opacity-50 px-4 py-2 text-center font-semibold">ຊື່ແລະນາມສະກຸນ</th>
                             <th className="border border-btnn border-opacity-50 px-4 py-2 text-center font-semibold">ເບີໂທລູກຄ້າ</th>
@@ -121,10 +86,10 @@ const CheckOutAdmin = () => {
                     <tbody className="bg-white">
                         {currentItems.map((item) => (
                             <tr key={item.id}>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.id}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.roomNumber}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.name}</td>
-                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.phoneNumber}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Booking_ID}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Room_Number}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.First_name + item.First_name}</td>
+                                <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light">{item.Phone_Number}</td>
                                 <td className="border border-btnn border-opacity-50 px-4 py-2 text-center font-light hover:cursor-pointer" onClick={() => showDialog(item)}>
                                     <div className="w-full ">
                                         <div className=" flex justify-center items-center border rounded-xl border-primaryColor">
@@ -155,7 +120,9 @@ const CheckOutAdmin = () => {
                     <IoIosArrowBack />
                 </div>
                 <div className="text-base font-light mx-5">
-                    {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredSaleData.length)} of {filteredSaleData.length}
+                    {indexOfFirstItem + 1} -{" "}
+                    {Math.min(indexOfLastItem, supplierArray.length)} of{" "}
+                    {supplierArray.length}
                 </div>
                 <div
                     className="items-center justify-center flex cursor-pointer"

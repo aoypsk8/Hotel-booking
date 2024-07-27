@@ -47,7 +47,6 @@ function Aside({ homePage }) {
         setUserData(user);
 
         if (user && user.details && user.details.Cus_Profile) {
-          setImagePreview(user.details.Cus_Profile);
         }
       } catch (error) {
         console.error("Failed to fetch user data", error);

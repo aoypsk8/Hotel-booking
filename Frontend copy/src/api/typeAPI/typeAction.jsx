@@ -1,7 +1,8 @@
 // import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import { createType, deleteType, getAllType, updateType } from "./typeApi";
+import { createType, deleteType, getAllType, search, updateType } from "./typeApi";
 import { addType } from "../../slice/typeSlice";
+import { addSearch } from "../../slice/searchSlice";
 export const GetAlltype = () => async (dispatch) => {
   try {
     const type = await getAllType();
@@ -96,3 +97,16 @@ export const UpdateType =
         return false;
       }
     };
+export const Search = (fromDate, toDate, typeroom_id) => async (dispatch) => {
+  try {
+    const type = await search(fromDate, toDate, typeroom_id);
+    console.log(type.data);
+    if (type.status == "ok") {
+      dispatch(addSearch(type.data));
+      return true;
+    }
+  } catch (error) {
+    Swal.fire(error.message);
+    return false;
+  }
+};

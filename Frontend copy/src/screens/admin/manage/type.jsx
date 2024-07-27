@@ -161,7 +161,6 @@ const ManageTypeAdmin = () => {
                                                     dispatch(DeleteType(item.Type_ID));
                                                 }
                                             });
-
                                         }}
                                     >
                                         <img src={ic_delete} alt="" className="w-5 h-5" />
