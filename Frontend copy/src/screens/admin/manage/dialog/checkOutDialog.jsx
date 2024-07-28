@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetAllEquipment } from '../../../../api/equipment/equipmentAction';
 import Swal from 'sweetalert2';
 import BillDialog from './BillDialog';
-import { UpdateBookingCheckIn, UpdateBookingCheckOut } from '../../../../api/booking/bookingAction';
+import { UpdateBookingCheckOut } from '../../../../api/booking/bookingAction';
 
 const formatDate = (isoDateString) => {
     const date = new Date(isoDateString);
@@ -18,9 +18,9 @@ const formatDate = (isoDateString) => {
 const CheckOutDialog = ({ visible, hideDialog, data }) => {
     const dispatch = useDispatch();
     const [visibleBill, setVisibleBill] = useState(false);
-
     const [equipmentData, setEquipmentData] = useState([]);
     const { equipment } = useSelector((state) => state.equipment);
+    const [selectedEquipment, setSelectedEquipment] = useState([]); // Use array for multiple selections
 
     useEffect(() => {
         dispatch(GetAllEquipment());
@@ -30,10 +30,10 @@ const CheckOutDialog = ({ visible, hideDialog, data }) => {
         setEquipmentData(equipment || []);
     }, [equipment]);
 
-    const [selectedEquipment, setSelectedEquipment] = useState([]); // Use array for multiple selections
     const handleEquipmentChange = (e) => {
         setSelectedEquipment(e.value); // e.value contains the selected values
     };
+
     const handleSave = () => {
         try {
             if (!data || !data.Booking_ID) {
@@ -44,8 +44,8 @@ const CheckOutDialog = ({ visible, hideDialog, data }) => {
                 Status: 4,
                 equipmentIds: selectedEquipment // Send equipment IDs as an array
             };
-            //equipmentIds
-            dispatch(UpdateBookingCheckOut(data.Room_ID,data.Booking_ID, updatedBookingData))
+
+            dispatch(UpdateBookingCheckOut(data.Room_ID, data.Booking_ID, updatedBookingData))
                 .then(() => {
                     Swal.fire("Success", "Booking updated successfully", "success");
                     setVisibleBill(true);
@@ -59,14 +59,13 @@ const CheckOutDialog = ({ visible, hideDialog, data }) => {
         }
     };
 
-
     const hideDialogBill = () => {
         setVisibleBill(false);
     };
 
     return (
         <Dialog
-            header="ກວດສອບຂໍໍາມູນ"
+            header="ກວດສອບຂໍ້ມູນ"
             visible={visible}
             style={{ width: '50rem' }}
             modal
@@ -120,7 +119,7 @@ const CheckOutDialog = ({ visible, hideDialog, data }) => {
                         />
                     </div>
                     <div className="flex justify-between items-center mt-2 px-10">
-                        <p className='text-lg'>ອຸປະກອນທີ່ສໍາເລີຍ</p>
+                        <p className='text-lg'>ອຸປະກອນທີ່ເສຍຫາຍ</p>
                         <MultiSelect
                             options={equipmentData}
                             optionLabel="EquipmentName"
@@ -150,7 +149,13 @@ const CheckOutDialog = ({ visible, hideDialog, data }) => {
             ) : (
                 <p>No data available</p>
             )}
-            <BillDialog visible={visibleBill} hideDialog={hideDialogBill} data={data} hideCheckInDialog={hideDialog} />
+            <BillDialog
+                visible={visibleBill}
+                hideDialog={hideDialogBill}
+                data={data}
+                selectedEquipment={selectedEquipment} // Pass selected equipment data to BillDialog
+                hideCheckInDialog={hideDialog}
+            />
         </Dialog>
     );
 };
